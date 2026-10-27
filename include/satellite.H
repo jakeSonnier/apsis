@@ -5,7 +5,7 @@
 // \brief ...
 class orbit_t
 {
-    public:
+public:
         ~orbit_t ();
 
         orbit_t (double argumentOfPerigee_,
@@ -20,7 +20,7 @@ class orbit_t
                  double meanMotion_,
                  int revolutionNumber_,
                  double rightAscensionOfAscendingNode_);
-    
+
         // \brief ...
         // \unit ...
         double argumentOfPerigee () const;
@@ -58,7 +58,7 @@ class orbit_t
         // \unit ...
         double rightAscensionOfAscendingNode () const;
 
-    private:
+private:
         double m_argumentOfPerigee;
         double m_bstar;
         double m_eccentricity;
@@ -76,7 +76,7 @@ class orbit_t
 // \brief ...
 class satellite_t
 {
-    public:
+public:
         ~satellite_t ();
 
         satellite_t (char classification_,
@@ -85,7 +85,7 @@ class satellite_t
                      int number_,
                      orbit_t orbit_);
 
-        std::string toString() const;
+        std::string toString () const;
 
         // \brief ...
         // \unit ...
@@ -104,7 +104,7 @@ class satellite_t
         // \unit ...
         orbit_t orbit () const;
 
-    private:
+private:
         char m_classification;
         std::string m_internationalDesignator;
         std::string m_name;

@@ -1,5 +1,5 @@
-#include "tleParser.H"
 #include "satellite.H"
+#include "tleParser.H"
 
 #include <fstream>
 #include <iomanip>
@@ -8,14 +8,14 @@
 
 int main ()
 {
-    std::vector<satellite_t> satellitesLoaded = tleParser::loadSatellites ("tles.csv");
+        std::vector<satellite_t> satellitesLoaded = tleParser::loadSatellites ("tles.csv");
 
-    std::cout << std::setprecision(10);
+        std::cout << std::setprecision (10);
 
-    for (auto it = satellitesLoaded.begin (); it != satellitesLoaded.end (); it++)
-    {
-        std::cout << it->toString () << std::endl;
-    }
+        for (auto it = satellitesLoaded.begin (); it != satellitesLoaded.end (); it++)
+        {
+                std::cout << it->toString () << std::endl;
+        }
 
-    return 0;
+        return 0;
 }
