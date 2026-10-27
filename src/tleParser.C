@@ -124,14 +124,14 @@ satellite_t parseTLE (std::string &name_, std::string &line1_, std::string &line
         return satellite;
 }
 
-double parseBstar (const std::string &field)
+double parseBstar (const std::string &field_)
 {
         // Expected format: " 12345-3" or "-12345-3"
         // First 6 characters: signed mantissa with implied decimal
         // Last 2 characters: signed exponent
 
-        double mantissa = std::stod (field.substr (0, 6)) * 1e-5;
-        int exponent = std::stoi (field.substr (6, 2));
+        double mantissa = std::stod (field_.substr (0, 6)) * 1e-5;
+        int exponent = std::stoi (field_.substr (6, 2));
 
         return mantissa * std::pow (10.0, exponent);
 }
