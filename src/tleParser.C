@@ -62,7 +62,7 @@ satellite_t parseTLE (std::string &name_, std::string &line1_, std::string &line
         double eccentricity;
         int elementNumber;
         char ephemerisType;
-        int epochDay;
+        double epochDay;
         int epochYear;
         double inclination;
         double meanAnomaly;
