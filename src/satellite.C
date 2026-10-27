@@ -6,7 +6,6 @@
 
 orbit_t::~orbit_t ()
 {
-        // std::cout << "Destructing orbital data!" << std::endl;
 }
 
 orbit_t::orbit_t (double argumentOfPerigee_,
@@ -34,7 +33,6 @@ orbit_t::orbit_t (double argumentOfPerigee_,
         , m_revolutionNumber (revolutionNumber_)
         , m_rightAscensionOfAscendingNode (rightAscensionOfAscendingNode_)
 {
-        // std::cout << "Constructing new satellite orbit data!" << std::endl;
 }
 
 double orbit_t::argumentOfPerigee () const
@@ -99,7 +97,6 @@ double orbit_t::rightAscensionOfAscendingNode () const
 
 satellite_t::~satellite_t ()
 {
-        // std::cout << "Destructing satellite!" << std::endl;
 }
 
 satellite_t::satellite_t (char classification_,
@@ -113,7 +110,6 @@ satellite_t::satellite_t (char classification_,
         , m_number (number_)
         , m_orbit (orbit_)
 {
-        // std::cout << "Constructing new satellite!" << std::endl;
 }
 
 std::string satellite_t::toString () const

@@ -57,8 +57,6 @@ bool readTLE (std::fstream &input_,
 
 satellite_t parseTLE (std::string &name_, std::string &line1_, std::string &line2_)
 {
-        // std::cout << "parsing TLE!" << std::endl;
-
         double argumentOfPerigee;
         double bstar;
         double eccentricity;

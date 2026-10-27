@@ -2,7 +2,6 @@
 
 #pragma once
 
-// \brief ...
 class orbit_t
 {
 public:
@@ -106,7 +105,6 @@ private:
         double m_rightAscensionOfAscendingNode;
 };
 
-// \brief ...
 class satellite_t
 {
 public:
