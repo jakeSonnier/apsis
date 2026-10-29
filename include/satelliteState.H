@@ -1,8 +1,15 @@
+#pragma once
+
 struct vector3_t
 {
         double x;
         double y;
         double z;
+};
+
+struct eciPosition_t
+{
+        vector3_t coordinates;
 };
 
 struct ecefPosition_t

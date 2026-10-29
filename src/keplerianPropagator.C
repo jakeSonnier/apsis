@@ -1,3 +1,5 @@
+#include "constants.H"
+#include "coordinateTransform.H"
 #include "keplerianPropagator.H"
 
 #include <cmath>
@@ -26,7 +28,25 @@ satelliteState_t keplerianPropagator_t::propagate (const satellite_t &satellite_
                 orbitalPlanePosition (semiMajorAxisKm,
                                       satellite_.orbit ().eccentricity (),
                                       eccentricAnomalyAtCurrentTime);
+        const eciPosition_t eciPosition =
+                coordinateTransform::orbitalPlaneToEci (position, satellite_.orbit ());
+        const ecefPosition_t ecefPosition =
+                coordinateTransform::eciToEcef (eciPosition, time_);
+        const geographicPosition_t geographicPosition =
+                coordinateTransform::ecefToGeographic (ecefPosition);
+        const ecefPosition_t doubleCheckEcefPosition =
+                coordinateTransform::geographicToEcef (geographicPosition);
 
+        const double latitudeDegrees =
+                geographicPosition.latitude * (180.0 / std::numbers::pi);
+
+        const double longitudeDegrees =
+                geographicPosition.longitude * (180.0 / std::numbers::pi);
+
+        /*std::cout << "Elapsed seconds since TLE epoch: " << deltaTime << '\n';
+        std::cout << "GMST radians: " << coordinateTransform::greenwichMeanSiderealTime (time_)
+                  << '\n';
+        std::cout << "Current mean anomaly: " << meanAnomalyAtCurrentTime << '\n';
         std::cout << "mean motion in radians per second: " << meanMotionRadPerSecond
                   << std::endl;
         std::cout << "semi major axis in km: " << semiMajorAxisKm << std::endl;
@@ -36,10 +56,28 @@ satelliteState_t keplerianPropagator_t::propagate (const satellite_t &satellite_
         std::cout << std::setprecision (12)
                   << "eccentric anomaly at current time: " << eccentricAnomalyAtCurrentTime
                   << std::endl;
-        std::cout << "Orbital Position X: " << position.xKm << " Y: " << position.yKm
+        std::cout << "Orbital Plane Position X: " << position.xKm << " Y: " << position.yKm
                   << std::endl;
+        std::cout << "ECI Position X: " << eciPosition.coordinates.x
+                  << " Y: " << eciPosition.coordinates.y << " Z: " << eciPosition.coordinates.z
+                  << std::endl;
+        std::cout << "ECEF Position X: " << ecefPosition.coordinates.x
+                  << " Y: " << ecefPosition.coordinates.y
+                  << " Z: " << ecefPosition.coordinates.z << std::endl;
+        std::cout << "Geographic Position latitude: " << latitudeDegrees
+                  << " longitude: " << longitudeDegrees
+                  << " altitude: " << geographicPosition.altitude << std::endl;
+        std::cout
+                << "ECEF Position from Geographic X: " << doubleCheckEcefPosition.coordinates.x
+                << " Y: " << doubleCheckEcefPosition.coordinates.y
+                << " Z: " << doubleCheckEcefPosition.coordinates.z << std::endl;
 
-        std::cout << std::endl;
+        std::cout << std::endl;*/
+
+        satelliteState.position = ecefPosition;
+        satelliteState.velocity.x = 67;
+        satelliteState.velocity.y = 67;
+        satelliteState.velocity.z = 67;
 
         return satelliteState;
 }
@@ -54,17 +92,18 @@ double keplerianPropagator_t::elapsedSecondsSinceEpoch (const satellite_t &satel
 
 double keplerianPropagator_t::meanMotionRadiansPerSecond (const double meanMotion_) const
 {
-        return meanMotion_ * TWO_PI / SECONDS_PER_DAY;
+        return meanMotion_ * constants::TWO_PI / constants::SECONDS_PER_DAY;
 }
 
 double keplerianPropagator_t::semiMajorAxis (const double meanMotionRadiansPerSecond_) const
 {
-        return cbrt (EARTH_MU_KM3_PER_SECOND2 / std::pow (meanMotionRadiansPerSecond_, 2));
+        return cbrt (constants::EARTH_MU_KM3_PER_SECOND2
+                     / std::pow (meanMotionRadiansPerSecond_, 2));
 }
 
 double keplerianPropagator_t::meanAnomalyInRadians (const double meanAnomaly_) const
 {
-        return meanAnomaly_ * DEGREES_TO_RADIANS;
+        return meanAnomaly_ * constants::DEGREES_TO_RADIANS;
 }
 
 double keplerianPropagator_t::meanAnomalyAtTime (const double meanAnomalyInRadians_,
@@ -74,11 +113,11 @@ double keplerianPropagator_t::meanAnomalyAtTime (const double meanAnomalyInRadia
         double meanAnomalyAtTime = meanAnomalyInRadians_
                                    + meanMotionRadiansPerSecond_ * elapsedSecondsSinceEpoch_;
 
-        meanAnomalyAtTime = std::fmod (meanAnomalyAtTime, TWO_PI);
+        meanAnomalyAtTime = std::fmod (meanAnomalyAtTime, constants::TWO_PI);
 
         if (meanAnomalyAtTime < 0.0)
         {
-                meanAnomalyAtTime += TWO_PI;
+                meanAnomalyAtTime += constants::TWO_PI;
         }
 
         return meanAnomalyAtTime;
@@ -89,7 +128,7 @@ double keplerianPropagator_t::eccentricAnomalyFromMeanAnomaly (
 {
         double eccentricAnomaly = meanAnomalyInRadians_;
 
-        for (int i = 0; i < MAX_KEPLER_ITERATIONS; i++)
+        for (int i = 0; i < constants::MAX_KEPLER_ITERATIONS; i++)
         {
                 const double functionValue = eccentricAnomaly
                                              - eccentricity_ * std::sin (eccentricAnomaly)
@@ -101,7 +140,7 @@ double keplerianPropagator_t::eccentricAnomalyFromMeanAnomaly (
 
                 eccentricAnomaly -= correction;
 
-                if (std::abs (correction) < KEPLER_TOLERANCE)
+                if (std::abs (correction) < constants::KEPLER_TOLERANCE)
                 {
                         return eccentricAnomaly;
                 }
