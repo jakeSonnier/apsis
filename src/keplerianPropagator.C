@@ -5,31 +5,70 @@
 #include <cmath>
 #include <iostream>
 
+bool keplerianPropagationData_t::initialize (const satellite_t &satellite_)
+{
+        m_satellite = satellite_;
+
+        return true;
+}
+
+const satellite_t &keplerianPropagationData_t::satellite () const
+{
+        return m_satellite.value ();
+}
+
 keplerianPropagator_t::keplerianPropagator_t ()
 {
 }
 
-satelliteState_t keplerianPropagator_t::propagate (const satellite_t &satellite_,
+bool keplerianPropagator_t::initialize (
+        const satellite_t &satellite_,
+        std::unique_ptr<const propagationData_t> &propagationData_) const
+{
+        auto keplerianPropagationData = std::make_unique<keplerianPropagationData_t> ();
+
+        if (!keplerianPropagationData->initialize (satellite_))
+        {
+                propagationData_.reset ();
+                return false;
+        }
+
+        propagationData_ = std::move (keplerianPropagationData);
+
+        return true;
+}
+
+satelliteState_t keplerianPropagator_t::propagate (const propagationData_t &propagationData_,
                                                    timePoint time_) const
 {
+        const auto *keplerianPropagationData =
+                dynamic_cast<const keplerianPropagationData_t *> (&propagationData_);
+
+        if (!keplerianPropagationData)
+        {
+                throw std::invalid_argument (
+                        "Invalid propagation data supplied to keplerianPropagator_t");
+        }
+
+        const satellite_t &satellite = keplerianPropagationData->satellite ();
+
         satelliteState_t satelliteState;
 
-        const double deltaTime = elapsedSecondsSinceEpoch (satellite_, time_);
+        const double deltaTime = elapsedSecondsSinceEpoch (satellite, time_);
         const double meanMotionRadPerSecond =
-                meanMotionRadiansPerSecond (satellite_.orbit ().meanMotion ());
+                meanMotionRadiansPerSecond (satellite.orbit ().meanMotion ());
         const double semiMajorAxisKm = semiMajorAxis (meanMotionRadPerSecond);
-        const double meanAnomalyRad =
-                meanAnomalyInRadians (satellite_.orbit ().meanAnomaly ());
+        const double meanAnomalyRad = meanAnomalyInRadians (satellite.orbit ().meanAnomaly ());
         const double meanAnomalyAtCurrentTime =
                 meanAnomalyAtTime (meanAnomalyRad, meanMotionRadPerSecond, deltaTime);
         const double eccentricAnomalyAtCurrentTime = eccentricAnomalyFromMeanAnomaly (
-                meanAnomalyAtCurrentTime, satellite_.orbit ().eccentricity ());
+                meanAnomalyAtCurrentTime, satellite.orbit ().eccentricity ());
         const orbitalPlanePosition_t position =
                 orbitalPlanePosition (semiMajorAxisKm,
-                                      satellite_.orbit ().eccentricity (),
+                                      satellite.orbit ().eccentricity (),
                                       eccentricAnomalyAtCurrentTime);
         const eciPosition_t eciPosition =
-                coordinateTransform::orbitalPlaneToEci (position, satellite_.orbit ());
+                coordinateTransform::orbitalPlaneToEci (position, satellite.orbit ());
         const ecefPosition_t ecefPosition =
                 coordinateTransform::eciToEcef (eciPosition, time_);
         const geographicPosition_t geographicPosition =

@@ -25,8 +25,13 @@ int main ()
         while (true)
         {
                 const timePoint currentTime = std::chrono::system_clock::now ();
+
+                keplerianPropagationData_t keplerianPropagationData;
+                keplerianPropagationData.initialize (satellitesLoaded[0]);
+
                 const satelliteState_t satelliteState =
-                        keplerianPropagator.propagate (satellitesLoaded[0], currentTime);
+                        keplerianPropagator.propagate (keplerianPropagationData, currentTime);
+
                 const geographicPosition_t geographicPosition =
                         coordinateTransform::ecefToGeographic (satelliteState.position);
 
