@@ -1,11 +1,23 @@
 #include "orbitPropagator.H"
 #include "satellite.H"
 
-/*class sgp4Propagator_t final : public orbitPropagator_t
+#pragma once
+
+class sgp4PropagationData_t final : public propagationData_t
 {
 public:
-        sgp4Propagator_t (const satellite_t &satellite);
+        bool initialize (const satellite_t &satellite_) const;
+};
 
-        satelliteState_t propagate (const satellite_t &satellite,
-                                    timePoint time) const override;
-};*/
+class sgp4Propagator_t final : public orbitPropagator_t
+{
+public:
+        sgp4Propagator_t ();
+
+        bool initialize (
+                const satellite_t &satellite_,
+                std::unique_ptr<const propagationData_t> &propagationData_) const override;
+
+        satelliteState_t propagate (const propagationData_t &propagationData_,
+                                    timePoint time_) const override;
+};

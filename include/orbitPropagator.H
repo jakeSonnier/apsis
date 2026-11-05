@@ -4,6 +4,8 @@
 #include <chrono>
 #include <memory>
 
+#pragma once
+
 using timePoint = std::chrono::system_clock::time_point;
 
 class propagationData_t

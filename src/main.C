@@ -2,6 +2,7 @@
 #include "keplerianPropagator.H"
 #include "satellite.H"
 #include "satelliteState.H"
+#include "sgp4Propagator.H"
 #include "tleParser.H"
 
 #include <chrono>
@@ -21,30 +22,39 @@ int main ()
         std::cout << std::setprecision (10);
 
         keplerianPropagator_t keplerianPropagator;
+        sgp4Propagator_t sgp4Propagator;
+
+        keplerianPropagationData_t keplerianPropagationData;
+        keplerianPropagationData.initialize (satellitesLoaded[0]);
+
+        sgp4PropagationData_t sgp4PropagationData;
+        sgp4PropagationData.initialize (satellitesLoaded[0]);
 
         while (true)
         {
                 const timePoint currentTime = std::chrono::system_clock::now ();
 
-                keplerianPropagationData_t keplerianPropagationData;
-                keplerianPropagationData.initialize (satellitesLoaded[0]);
-
-                const satelliteState_t satelliteState =
+                const satelliteState_t keplerianSatelliteState =
                         keplerianPropagator.propagate (keplerianPropagationData, currentTime);
 
-                const geographicPosition_t geographicPosition =
-                        coordinateTransform::ecefToGeographic (satelliteState.position);
+                const satelliteState_t sgp4SatelliteState =
+                        sgp4Propagator.propagate (sgp4PropagationData, currentTime);
 
-                const double latitudeDegrees =
-                        geographicPosition.latitude * (180.0 / std::numbers::pi);
+                const geographicPosition_t keplerianGeographicPosition =
+                        coordinateTransform::ecefToGeographic (
+                                keplerianSatelliteState.position);
 
-                const double longitudeDegrees =
-                        geographicPosition.longitude * (180.0 / std::numbers::pi);
+                const double keplerianLatitudeDegrees =
+                        keplerianGeographicPosition.latitude * (180.0 / std::numbers::pi);
 
-                std::cout << "ISS Current Position: \nLatitude: " << latitudeDegrees
-                          << "\nLongitude: " << longitudeDegrees
-                          << "\nAltitude: " << geographicPosition.altitude
-                          << "\nVelocity: " << satelliteState.velocity.x << "\n"
+                const double keplerianLongitudeDegrees =
+                        keplerianGeographicPosition.longitude * (180.0 / std::numbers::pi);
+
+                std::cout << "Keplerian Propagation ->" << std::endl;
+                std::cout << "ISS Current Position: \nLatitude: " << keplerianLatitudeDegrees
+                          << "\nLongitude: " << keplerianLongitudeDegrees
+                          << "\nAltitude: " << keplerianGeographicPosition.altitude
+                          << "\nVelocity: " << keplerianSatelliteState.velocity.x << "\n"
                           << "\n"
                           << std::endl;
 

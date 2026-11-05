@@ -1,6 +1,8 @@
 #include "orbitPropagator.H"
 
-class keplerianPropagationData_t : public propagationData_t
+#pragma once
+
+class keplerianPropagationData_t final : public propagationData_t
 {
         /// \todo Pre-compute some data to propagation data class. Going to just wrap the
         /// satellite object into this to keep the inheritance in line as the SGP4 propagation
