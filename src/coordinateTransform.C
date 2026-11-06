@@ -56,6 +56,52 @@ ecefPosition_t coordinateTransform::eciToEcef (const eciPosition_t &position_, t
         return result;
 }
 
+satelliteState_t coordinateTransform::temeToSatelliteState (const temeState_t &state_,
+                                                            timePoint time_)
+{
+        satelliteState_t satelliteState;
+
+        // Calculate Greenwich Mean Sidereal Time.
+        const double siderealTime = greenwichMeanSiderealTime (time_);
+
+        const double cosineSiderealTime = std::cos (siderealTime);
+        const double sineSiderealTime = std::sin (siderealTime);
+
+        // Earth angular velocity (rad/s).
+        constexpr double earthAngularVelocity = 7.2921151467e-5;
+
+        // Rotate TEME position into ECEF.
+        satelliteState.position.coordinates.x =
+                cosineSiderealTime * state_.position.x + sineSiderealTime * state_.position.y;
+
+        satelliteState.position.coordinates.y =
+                -sineSiderealTime * state_.position.x + cosineSiderealTime * state_.position.y;
+
+        satelliteState.position.coordinates.z = state_.position.z;
+
+        // Rotate TEME velocity into ECEF.
+        const double rotatedVelocityX =
+                cosineSiderealTime * state_.velocity.x + sineSiderealTime * state_.velocity.y;
+
+        const double rotatedVelocityY =
+                -sineSiderealTime * state_.velocity.x + cosineSiderealTime * state_.velocity.y;
+
+        const double rotatedVelocityZ = state_.velocity.z;
+
+        // Account for Earth's rotation.
+        satelliteState.velocity.x =
+                rotatedVelocityX
+                + earthAngularVelocity * satelliteState.position.coordinates.y;
+
+        satelliteState.velocity.y =
+                rotatedVelocityY
+                - earthAngularVelocity * satelliteState.position.coordinates.x;
+
+        satelliteState.velocity.z = rotatedVelocityZ;
+
+        return satelliteState;
+}
+
 geographicPosition_t coordinateTransform::ecefToGeographic (const ecefPosition_t &position_)
 {
         constexpr double a = 6378.137; // WGS84 equatorial radius, km

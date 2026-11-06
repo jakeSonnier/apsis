@@ -29,6 +29,7 @@ int main ()
 
         sgp4PropagationData_t sgp4PropagationData;
         sgp4PropagationData.initialize (satellitesLoaded[0]);
+        std::cout << sgp4PropagationData.toString ();
 
         while (true)
         {
@@ -44,19 +45,41 @@ int main ()
                         coordinateTransform::ecefToGeographic (
                                 keplerianSatelliteState.position);
 
+                const geographicPosition_t sgp4GeographicPosition =
+                        coordinateTransform::ecefToGeographic (sgp4SatelliteState.position);
+
                 const double keplerianLatitudeDegrees =
                         keplerianGeographicPosition.latitude * (180.0 / std::numbers::pi);
 
                 const double keplerianLongitudeDegrees =
                         keplerianGeographicPosition.longitude * (180.0 / std::numbers::pi);
 
-                std::cout << "Keplerian Propagation ->" << std::endl;
+                const double sgp4LatitudeDegrees =
+                        sgp4GeographicPosition.latitude * (180.0 / std::numbers::pi);
+
+                const double sgp4LongitudeDegrees =
+                        sgp4GeographicPosition.longitude * (180.0 / std::numbers::pi);
+
+                std::cout << std::endl;
+
+                std::cout << "-- Keplerian Propagation --" << std::endl;
                 std::cout << "ISS Current Position: \nLatitude: " << keplerianLatitudeDegrees
                           << "\nLongitude: " << keplerianLongitudeDegrees
                           << "\nAltitude: " << keplerianGeographicPosition.altitude
-                          << "\nVelocity: " << keplerianSatelliteState.velocity.x << "\n"
-                          << "\n"
+                          << "\nVelocity X: " << keplerianSatelliteState.velocity.x
+                          << "\nVelocity Y: " << keplerianSatelliteState.velocity.y
+                          << "\nVelocity Z: " << keplerianSatelliteState.velocity.z
                           << std::endl;
+                std::cout << "---------------------------" << std::endl;
+
+                std::cout << "-- SGP4 Propagation --" << std::endl;
+                std::cout << "ISS Current Position: \nLatitude: " << sgp4LatitudeDegrees
+                          << "\nLongitude: " << sgp4LongitudeDegrees
+                          << "\nAltitude: " << sgp4GeographicPosition.altitude
+                          << "\nVelocity X: " << sgp4SatelliteState.velocity.x
+                          << "\nVelocity Y: " << sgp4SatelliteState.velocity.y
+                          << "\nVelocity Z: " << sgp4SatelliteState.velocity.z << std::endl;
+                std::cout << "---------------------------" << std::endl;
 
                 std::this_thread::sleep_for (1s);
         }
