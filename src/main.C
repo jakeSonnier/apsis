@@ -1,8 +1,8 @@
 #include "coordinateTransform.H"
 #include "keplerianPropagator.H"
 #include "satellite.H"
-#include "satelliteState.H"
 #include "sgp4Propagator.H"
+#include "states.H"
 #include "tleParser.H"
 
 #include <chrono>

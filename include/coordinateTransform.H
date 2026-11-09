@@ -1,5 +1,5 @@
 #include "satellite.H"
-#include "satelliteState.H"
+#include "states.H"
 
 #include <chrono>
 
