@@ -13,7 +13,7 @@ orbit_t::orbit_t (double argumentOfPerigee_,
                   double eccentricity_,
                   int elementNumber_,
                   char ephemerisType_,
-                  int epochDay_,
+                  double epochDay_,
                   int epochYear_,
                   double inclination_,
                   double meanAnomaly_,
@@ -33,6 +33,25 @@ orbit_t::orbit_t (double argumentOfPerigee_,
         , m_revolutionNumber (revolutionNumber_)
         , m_rightAscensionOfAscendingNode (rightAscensionOfAscendingNode_)
 {
+}
+
+timePoint orbit_t::epoch () const
+{
+        using namespace std::chrono;
+
+        const int fullYear = (epochYear () >= 57) ? 1900 + epochYear () : 2000 + epochYear ();
+
+        // Midnight UTC on January 1 of the epoch year.
+        const sys_days yearStart{year{fullYear} / January / 1};
+
+        // TLE day 1 is January 1, so subtract 1.
+        const double daysSinceYearStart = epochDay () - 1.0;
+
+        // Convert the fractional day to seconds.
+        const duration<double> elapsedSeconds{daysSinceYearStart * 86400.0};
+
+        return time_point_cast<system_clock::duration> (yearStart)
+               + duration_cast<system_clock::duration> (elapsedSeconds);
 }
 
 double orbit_t::argumentOfPerigee () const
@@ -60,7 +79,7 @@ char orbit_t::ephemerisType () const
         return m_ephemerisType;
 }
 
-int orbit_t::epochDay () const
+double orbit_t::epochDay () const
 {
         return m_epochDay;
 }

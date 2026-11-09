@@ -1,6 +1,9 @@
+#include <chrono>
 #include <string>
 
 #pragma once
+
+using timePoint = std::chrono::system_clock::time_point;
 
 class orbit_t
 {
@@ -12,13 +15,17 @@ public:
                  double eccentricity_,
                  int elementNumber_,
                  char ephemerisType_,
-                 int epochDay_,
+                 double epochDay_,
                  int epochYear_,
                  double inclination_,
                  double meanAnomaly_,
                  double meanMotion_,
                  int revolutionNumber_,
                  double rightAscensionOfAscendingNode_);
+
+        /// \brief Returns the epoch time stamp
+        /// \note Uses std chrono time point
+        timePoint epoch () const;
 
         /// \brief Returns the argument of perigee.
         /// \note Angle measured from the ascending node to perigee in the orbital plane.
@@ -50,10 +57,9 @@ public:
 
         /// \brief Returns the epoch day.
         /// \note Day of the year, including the fractional part representing the time
-        ///       of day, as encoded in the TLE epoch field. The returned integer
-        ///       contains only the whole-number day if the value is stored as an integer.
-        /// \unit Days of year (integer day number)
-        int epochDay () const;
+        ///       of day, as encoded in the TLE epoch field.
+        /// \unit Days of year (double day number with fractional day)
+        double epochDay () const;
 
         /// \brief Returns the epoch year.
         /// \note Two-digit year from the TLE epoch field. The conventional TLE
@@ -96,7 +102,7 @@ private:
         double m_eccentricity;
         int m_elementNumber;
         char m_ephemerisType;
-        int m_epochDay;
+        double m_epochDay;
         int m_epochYear;
         double m_inclination;
         double m_meanAnomaly;
