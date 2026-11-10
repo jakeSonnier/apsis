@@ -61,6 +61,8 @@ satelliteState_t coordinateTransform::temeToSatelliteState (const temeState_t &s
 {
         satelliteState_t satelliteState;
 
+        constexpr double KM_TO_METERS = 1000.0;
+
         // Calculate Greenwich Mean Sidereal Time.
         const double siderealTime = greenwichMeanSiderealTime (time_);
 
@@ -72,12 +74,14 @@ satelliteState_t coordinateTransform::temeToSatelliteState (const temeState_t &s
 
         // Rotate TEME position into ECEF.
         satelliteState.position.coordinates.x =
-                cosineSiderealTime * state_.position.x + sineSiderealTime * state_.position.y;
+                cosineSiderealTime * state_.position.x
+                + sineSiderealTime * state_.position.y * KM_TO_METERS;
 
         satelliteState.position.coordinates.y =
-                -sineSiderealTime * state_.position.x + cosineSiderealTime * state_.position.y;
+                -sineSiderealTime * state_.position.x
+                + cosineSiderealTime * state_.position.y * KM_TO_METERS;
 
-        satelliteState.position.coordinates.z = state_.position.z;
+        satelliteState.position.coordinates.z = state_.position.z * KM_TO_METERS;
 
         // Rotate TEME velocity into ECEF.
         const double rotatedVelocityX =
@@ -104,7 +108,7 @@ satelliteState_t coordinateTransform::temeToSatelliteState (const temeState_t &s
 
 geographicPosition_t coordinateTransform::ecefToGeographic (const ecefPosition_t &position_)
 {
-        constexpr double a = 6378.137; // WGS84 equatorial radius, km
+        constexpr double a = 6378137.0; // WGS84 equatorial radius, meters
         constexpr double f = 1.0 / 298.257223563;
         constexpr double e2 = f * (2.0 - f);
 
@@ -170,12 +174,12 @@ geographicPosition_t coordinateTransform::ecefToGeographic (const ecefPosition_t
 
 ecefPosition_t coordinateTransform::geographicToEcef (const geographicPosition_t &position_)
 {
-        constexpr double a = 6378.137;
+        constexpr double a = 6378137.0;
         constexpr double f = 1.0 / 298.257223563;
         constexpr double e2 = f * (2.0 - f);
 
-        const double latitude = position_.latitude;
-        const double longitude = position_.longitude;
+        const double latitude = position_.latitude * constants::DEGREES_TO_RADIANS;
+        const double longitude = position_.longitude * constants::DEGREES_TO_RADIANS;
         const double altitude = position_.altitude;
 
         const double sinLat = std::sin (latitude);

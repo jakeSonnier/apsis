@@ -10,8 +10,6 @@
 
 bool sgp4PropagationData_t::initialize (const satellite_t &satellite_)
 {
-        std::cout << "Starting initialize for SGP4 propagation data" << std::endl;
-
         // TLE-derived elements (internal units)
         m_epoch = satellite_.orbit ().epoch ();
         m_eccentricity = satellite_.orbit ().eccentricity ();
@@ -538,15 +536,12 @@ bool sgp4PropagationData_t::calculateLongPeriodCoefficients ()
 
 sgp4Propagator_t::sgp4Propagator_t ()
 {
-        std::cout << "Starting constructor for SPG4 propagator" << std::endl;
 }
 
 bool sgp4Propagator_t::initialize (
         const satellite_t &satellite_,
         std::unique_ptr<const propagationData_t> &propagationData_) const
 {
-        std::cout << "Starting initialize for SGP4 propagator" << std::endl;
-
         return true;
 }
 
@@ -892,95 +887,6 @@ satelliteState_t sgp4Propagator_t::propagate (const propagationData_t &propagati
 
         satelliteState_t satelliteState =
                 coordinateTransform::temeToSatelliteState (temeState, time_);
-
-        /*std::cout << "Elapsed time: " << elapsedTimeMinutes << " minutes" << std::endl;
-        std::cout << "updatedMeanAnomaly: " << updatedMeanAnomaly << std::endl;
-        std::cout << "updatedArgumentOfPerigee: " << updatedArgumentOfPerigee << std::endl;
-        std::cout << "updatedRightAscensionOfAscendingNode: "
-                  << updatedRightAscensionOfAscendingNode << std::endl;
-        std::cout << "semiMajorAxisDragCorrection: " << semiMajorAxisDragCorrection
-                  << std::endl;
-        std::cout << "eccentricityDragCorrection: " << eccentricityDragCorrection << std::endl;
-        std::cout << "meanLongitudeDragCorrection: " << meanLongitudeDragCorrection
-                  << std::endl;
-        std::cout << "Updated semi-major axis: " << updatedSemiMajorAxis << " Earth radii"
-                  << std::endl;
-        std::cout << "Updated eccentricity: " << updatedEccentricity << std::endl;
-        std::cout << "Updated mean motion: " << updatedMeanMotion << " rad/min" << std::endl;
-        std::cout << "Argument of perigee drag correction: " << argumentOfPerigeeDragCorrection
-                  << std::endl;
-        std::cout << "Mean anomaly drag correction: " << meanAnomalyDragCorrection
-                  << std::endl;
-        std::cout << "Combined drag correction: " << combinedDragCorrection << std::endl;
-        std::cout << "Corrected mean anomaly: " << updatedMeanAnomaly << std::endl;
-        std::cout << "Corrected argument of perigee: " << updatedArgumentOfPerigee
-                  << std::endl;
-        std::cout << "Corrected Mean Longitude (normalized): " << correctedMeanLongitude
-                  << std::endl;
-        std::cout << "Corrected Argument of Latitude (normalized): "
-                  << correctedArgumentOfLatitude << std::endl;
-        std::cout << "correctedEccentricityComponentY: " << correctedEccentricityComponentY
-                  << std::endl;
-        std::cout << "correctedEccentricityComponentX: " << correctedEccentricityComponentX
-                  << std::endl;
-        std::cout << "Corrected eccentricity magnitude: " << correctedEccentricityMagnitude
-                  << std::endl;
-        std::cout << "Initial eccentric longitude: " << initialEccentricLongitude << std::endl;
-        std::cout << "Solved eccentric longitude: " << eccentricLongitude << std::endl;
-        std::cout << "Eccentricity cosine component: " << eccentricityCosineComponent
-                  << std::endl;
-        std::cout << "Eccentricity sine component: " << eccentricitySineComponent << std::endl;
-        std::cout << "Corrected eccentricity squared: " << correctedEccentricitySquared
-                  << std::endl;
-        std::cout << "Corrected semi-latus rectum: " << correctedSemiLatusRectum << std::endl;
-        std::cout << "Corrected orbital radius: " << correctedOrbitalRadius << std::endl;
-        std::cout << "Inverse corrected semi-latus rectum: " << inverseCorrectedSemiLatusRectum
-                  << std::endl;
-        std::cout << "Radial velocity intermediate: " << radialVelocityIntermediate
-                  << std::endl;
-        std::cout << "Transverse velocity intermediate: " << transverseVelocityIntermediate
-                  << std::endl;
-        std::cout << "Short-period correction factor 1: " << shortPeriodCorrectionFactor1
-                  << std::endl;
-        std::cout << "Short-period correction factor 2: " << shortPeriodCorrectionFactor2
-                  << std::endl;
-        std::cout << "Argument of latitude correction: " << argumentOfLatitudeCorrection
-                  << std::endl;
-        std::cout << "Short-period corrected argument of latitude: "
-                  << shortPeriodCorrectedArgumentOfLatitude << std::endl;
-        std::cout << "Right ascension correction: " << rightAscensionCorrection << std::endl;
-        std::cout << "Short-period corrected right ascension: "
-                  << shortPeriodCorrectedRightAscension << std::endl;
-        std::cout << "Inclination correction: " << inclinationCorrection << std::endl;
-        std::cout << "Short-period corrected inclination: " << shortPeriodCorrectedInclination
-                  << std::endl;
-        std::cout << "correctedBeta: " << correctedBeta << std::endl;
-        std::cout << "cosineDoubleArgumentOfLatitude: " << cosineDoubleArgumentOfLatitude
-                  << std::endl;
-        std::cout << "shortPeriodCorrectedOrbitalRadius: " << shortPeriodCorrectedOrbitalRadius
-                  << std::endl;
-        std::cout << "shortPeriodCorrectedRadialVelocity: "
-                  << shortPeriodCorrectedRadialVelocity << std::endl;
-        std::cout << "shortPeriodCorrectedTransverseVelocity: "
-                  << shortPeriodCorrectedTransverseVelocity << std::endl;*/
-
-        /*std::cout << "\n--- TEME State ---" << std::endl;
-        std::cout << "Position X: " << temePosition.x << " km" << std::endl;
-        std::cout << "Position Y: " << temePosition.y << " km" << std::endl;
-        std::cout << "Position Z: " << temePosition.z << " km" << std::endl;
-
-        std::cout << "Velocity X: " << temeVelocity.x << " km/s" << std::endl;
-        std::cout << "Velocity Y: " << temeVelocity.y << " km/s" << std::endl;
-        std::cout << "Velocity Z: " << temeVelocity.z << " km/s" << std::endl;
-
-        std::cout << "\n--- Satellite State (ECEF position + vel) ---" << std::endl;
-        std::cout << "Position X: " << satelliteState.position.coordinates.x << std::endl;
-        std::cout << "Position Y: " << satelliteState.position.coordinates.y << std::endl;
-        std::cout << "Position Z: " << satelliteState.position.coordinates.z << std::endl;
-
-        std::cout << "Velocity X: " << satelliteState.velocity.x << " km/s" << std::endl;
-        std::cout << "Velocity Y: " << satelliteState.velocity.y << " km/s" << std::endl;
-        std::cout << "Velocity Z: " << satelliteState.velocity.z << " km/s" << std::endl;*/
 
         return satelliteState;
 }

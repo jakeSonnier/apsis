@@ -9,6 +9,7 @@ static constexpr double SECONDS_PER_DAY = 86400.0;
 static constexpr double MINUTES_PER_DAY = 1440.0;
 static constexpr double TWO_PI = 6.28318530717958647692;
 static constexpr double DEGREES_TO_RADIANS = 3.14159265358979323846 / 180.0;
+static constexpr double RADIANS_TO_DEGREES = 180.0 / 3.14159265358979323846;
 
 // Numerical solver settings
 static constexpr double KEPLER_TOLERANCE = 1e-12;
